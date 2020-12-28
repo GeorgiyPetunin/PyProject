@@ -39,7 +39,8 @@ class EditProposeController(object):
                 return jsonify(message='No propose with such id!', status=404)
             return jsonify(message=[read_propose.text, read_propose.editor_id, read_propose.article_id], status=200)
         list_propose = EditPropose.ReadFromDatabase()
-        return jsonify([[i.text, i.editor_id, i.article_id] for i in list_propose], status=200)
+        return jsonify(list =[[i.text, i.editor_id, i.article_id] for i in list_propose], status=200)
+
 
     def Decision(self, user_id=None, propose_data=None):
         current_user = User.ReadFromDatabase(user_id=user_id)
