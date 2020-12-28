@@ -25,8 +25,6 @@ from Controllers.EditProposeC import EditProposeController
 from Models.User import User
 from flask import request
 
-# jwt.decode('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjA5MTg1MzE3fQ.KqAC2V5l2_Oz0AY_IVxAhMXunh0A8dV6jocExeHMiPs','my special secret key')
-
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
