@@ -11,10 +11,8 @@ class EditProposeController(object):
         self.edit_propose = edit_propose
 
     def Create(self, user_id=None, edit_data=None):
-        readUser = User.ReadFromDatabase(user_id=user_id)
-        if not readUser:
-            return jsonify(message='No user with such id!', status=404)
-        self.edit_propose.editor = readUser
+        self.edit_propose=EditPropose()
+        self.edit_propose.editor = User.ReadFromDatabase(user_id=user_id)
 
         readArticle = Article.ReadFromDatabase(article_id=edit_data.get('article_id'))
         if not readArticle:

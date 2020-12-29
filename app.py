@@ -12,7 +12,7 @@ programm.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 database.__init__(programm)
 migrate = Migrate(programm, database)
-
+test_programm = programm.test_client()
 
 @programm.route('/api/v1/hello-world-22')
 def hello_world():
@@ -24,6 +24,8 @@ from Controllers.ArticleC import ArticleController
 from Controllers.EditProposeC import EditProposeController
 from Models.User import User
 from flask import request
+
+# jwt.decode('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjA5MTg1MzE3fQ.KqAC2V5l2_Oz0AY_IVxAhMXunh0A8dV6jocExeHMiPs','my special secret key')
 
 def token_required(f):
     @wraps(f)
@@ -54,6 +56,7 @@ def login():
     user = User.query.filter_by(userName=data.username).first()
     if not user:
         return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
 
     if check_password_hash(user.password, data.password):
         token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},

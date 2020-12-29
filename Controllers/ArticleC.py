@@ -10,9 +10,8 @@ class ArticleController(object):
         self.article=article
 
     def Create(self, user_id=None,article_data=None):
+        self.article=Article()
         readUser = User.ReadFromDatabase(user_id=user_id)
-        if not readUser:
-            return jsonify(message='No user with such id!', status=404)
 
         self.article.creator=readUser
         self.article.text=article_data.get('text')
@@ -26,13 +25,11 @@ class ArticleController(object):
 
     def Read(self,user_id=None,article_id=None):
         if user_id:
-            if not User.ReadFromDatabase(user_id=user_id):
-                return jsonify(message='No user with such id!', status=404)
             list_of_articles = Article.ReadFromDatabase(user_id=user_id)
             return jsonify(list=[[i.text,i.name]for i in list_of_articles], status=200)
         if article_id:
             readArticle = Article.ReadFromDatabase(article_id=article_id)
-            if not readArticle:
+            if readArticle==None:
                 return jsonify(message='No article with such id!', status=404)
             return jsonify(message=[readArticle.name,
                                     readArticle.text],status=200)

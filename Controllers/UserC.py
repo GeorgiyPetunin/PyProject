@@ -10,6 +10,7 @@ class UserController(object):
         self.user = user
 
     def Create(self, user_data=None):
+        self.user=User()
         self.user.userName = user_data.get('userName')
         self.user.firstName = user_data.get('firstName')
         self.user.lastName = user_data.get('lastName')
@@ -44,14 +45,14 @@ class UserController(object):
             return jsonify(message='No user with such id!', status=404)
 
     def Edit(self, user_id=None,user_data=None):
-        if not User.ReadFromDatabase(user_id=user_id):
-            return jsonify(message='No user with such id!', status=404)
 
         self.user=User.ReadFromDatabase(user_id=user_id)
+        self.user.id = user_id
         if user_data.get('new_userName') and self.user.userName != user_data.get('new_userName'):
-            self.user.userName = user_data.get('new_userName')
-            if User.ReadFromDatabase(userName=self.user.userName):
+
+            if User.ReadFromDatabase(userName=self.user.userName) and self.user!=User.ReadFromDatabase(userName=self.user.userName):
                 return jsonify(message='User with this name already exist!', status=409)
+            self.user.userName = user_data.get('new_userName')
         if user_data.get('new_firstName'):
             self.user.firstName = user_data.get('new_firstName')
         if user_data.get('new_lastName'):
@@ -75,5 +76,3 @@ class UserController(object):
             database.session.delete(readUser)
             database.session.commit()
             return jsonify(message='Successfully user delete!', status=200)
-        else:
-            return jsonify(message='No user with such id!', status=404)
