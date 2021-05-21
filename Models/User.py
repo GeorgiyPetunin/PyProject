@@ -1,5 +1,8 @@
 from DatabaseCreate import database
 from re import *
+from marshmallow import Schema, fields, validate, ValidationError
+from app import ma
+
 
 
 class User(database.Model):
@@ -56,3 +59,16 @@ class User(database.Model):
         if userName:
             return User.query.filter_by(userName=userName).first()
         return None
+
+class UserSchema(ma.Schema):
+    id = fields.Integer(allow_none=True)
+    firstName = fields.Str(validate=validate.Length(min=1, max=70))
+    userName = fields.Str(validate=validate.Length(min=1, max=70))
+    lastName = fields.Str(validate=validate.Length(min=1, max=70))
+    email = fields.Str(validate=validate.Length(min=1, max=70))
+    phone = fields.Str(validate=validate.Length(min=1, max=30))
+    password = fields.Str(validate=validate.Length(min=1, max=70))
+    userStatusModerator = fields.Boolean(allow_none=True)
+
+    class Meta:
+        model = User

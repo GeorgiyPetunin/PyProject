@@ -1,8 +1,11 @@
-from Models.User import User
+
+from Models.User import *
 from werkzeug.security import generate_password_hash
 from DatabaseCreate import database
 from flask import jsonify
+from app import ma, bcrypt
 
+user_schema = UserSchema()
 
 class UserController(object):
 
@@ -17,10 +20,12 @@ class UserController(object):
         self.user.email = user_data.get('email')
         self.user.phone = user_data.get('phone')
         if user_data.get('moderator')=='moderator':
-            self.user.userStatusModerator = 1
+            self.user.userStatus = 1
         if user_data.get('password'):
-            self.user.password = generate_password_hash(user_data.get('password'))
-
+            self.user.password = bcrypt.generate_password_hash(user_data.get('password'))
+        user = User(userName=self.user.userName, firstName=self.user.firstName, lastName=self.user.lastName,
+                    email=self.user.email, phone=self.user.phone, password=self.user.password, userStatusModerator=self.user.userStatusModerator)
+        user_data = user_schema.dump(user)
         if self.user.SomeEmptyFields():
             return jsonify(message='Not all fields was filled!', status=400)
         if self.user.InvalidInput():
@@ -28,9 +33,9 @@ class UserController(object):
         if User.ReadFromDatabase(userName=self.user.userName):
             return jsonify(message='User with this name already exist!', status=409)
 
-        database.session.add(self.user)
+        database.session.add(user)
         database.session.commit()
-        return jsonify(message='Successfully user creation!', status=200)
+        return jsonify(user_data)
 
     def Read(self, user_id=None):
         readUser= User.ReadFromDatabase(user_id=user_id)
